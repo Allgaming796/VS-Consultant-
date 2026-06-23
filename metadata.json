@@ -1,0 +1,6 @@
+{
+  "name": "VS Architect",
+  "description": "A minimalist architectural and interior design portfolio for VS Architect in Shahjahanpur, featuring warm minimalist design, elegant screen transitions, clean typography, optimized high-resolution visuals, and dark mode support.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
