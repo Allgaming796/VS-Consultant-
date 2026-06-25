@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Search, X, Maximize2, MapPin, Calendar, Layout, Compass } from 'lucide-react';
 import { COMPLETED_PROJECTS } from '../data';
 import { ProjectType } from '../types';
+import ProjectProgressTracker from './ProjectProgressTracker';
 
 export default function ProjectGallery() {
   const [activeCategory, setActiveCategory] = useState<string>('all');
@@ -175,7 +176,7 @@ export default function ProjectGallery() {
               initial={{ scale: 0.9, y: 15 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 15 }}
-              className="bg-white dark:bg-zinc-950 w-full max-w-2xl rounded-3xl overflow-hidden shadow-2xl relative border border-slate-100 dark:border-zinc-800"
+              className="bg-white dark:bg-zinc-950 w-full max-w-2xl max-h-[92vh] overflow-y-auto rounded-3xl shadow-2xl relative border border-slate-100 dark:border-zinc-800"
             >
               {/* Close Button top corner */}
               <button
@@ -209,7 +210,7 @@ export default function ProjectGallery() {
                       {selectedProject.title}
                     </h3>
                     <p className="text-slate-500 dark:text-zinc-400 text-xs flex items-center gap-1.5 mt-1">
-                      <MapPin className="w-3.5 h-3.5 text-zinc-450" /> {selectedProject.location}
+                      <MapPin className="w-3.5 h-3.5 text-zinc-400" /> {selectedProject.location}
                     </p>
                   </div>
 
@@ -221,7 +222,7 @@ export default function ProjectGallery() {
                   </div>
                 </div>
 
-                <div className="space-y-4 pt-3 border-t border-slate-200/65 dark:border-zinc-800 font-sans">
+                <div className="space-y-5 pt-3 border-t border-slate-200/65 dark:border-zinc-800 font-sans">
                   <div>
                     <h4 className="text-[10px] font-mono text-slate-400 dark:text-zinc-500 uppercase tracking-widest mb-1.5">
                       DESCRIPTION &amp; CONCEPT
@@ -229,6 +230,14 @@ export default function ProjectGallery() {
                     <p className="text-slate-700 dark:text-zinc-300 text-xs leading-relaxed">
                       {selectedProject.description}
                     </p>
+                  </div>
+
+                  {/* Interactive Progress Tracker Section */}
+                  <div>
+                    <h4 className="text-[10px] font-mono text-slate-400 dark:text-zinc-500 uppercase tracking-widest mb-2">
+                      CONSTRUCTION TIMELINE PROGRESS
+                    </h4>
+                    <ProjectProgressTracker project={selectedProject} />
                   </div>
 
                   <div>
