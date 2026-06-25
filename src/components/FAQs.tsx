@@ -67,7 +67,7 @@ export default function FAQs() {
           <span className="text-amber-600 dark:text-amber-400 font-mono text-xs uppercase tracking-widest font-bold flex items-center gap-1">
             <HelpCircle className="w-3.5 h-3.5" /> Support Hub
           </span>
-          <h3 className="text-2xl sm:text-3xl font-serif text-slate-905 dark:text-zinc-100 font-light mt-1">
+          <h3 className="text-2xl sm:text-3xl font-serif text-slate-900 dark:text-zinc-100 font-light mt-1">
             Commonly Asked <em>Questions</em>
           </h3>
           <p className="text-slate-500 dark:text-zinc-400 text-xs mt-1">
@@ -87,7 +87,7 @@ export default function FAQs() {
               className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-all font-medium border ${
                 activeCategory === cat.id
                   ? 'bg-amber-600 border-amber-600 text-white shadow-sm'
-                  : 'bg-transparent border-slate-100 dark:border-zinc-900 text-slate-605 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-900'
+                  : 'bg-transparent border-slate-100 dark:border-zinc-900 text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-900'
               }`}
             >
               {cat.label}

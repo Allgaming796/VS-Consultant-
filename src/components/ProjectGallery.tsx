@@ -134,11 +134,11 @@ export default function ProjectGallery() {
                     <span className="text-[10px] uppercase font-mono tracking-wider text-amber-600 dark:text-amber-400 block mb-1">
                       {proj.architect}
                     </span>
-                    <h3 className="text-lg font-serif font-semibold text-slate-905 dark:text-zinc-100 hover:text-amber-650 transition cursor-pointer" onClick={() => setSelectedProject(proj)}>
+                    <h3 className="text-lg font-serif font-semibold text-slate-900 dark:text-zinc-100 hover:text-amber-600 transition cursor-pointer" onClick={() => setSelectedProject(proj)}>
                       {proj.title}
                     </h3>
                     <p className="text-slate-500 dark:text-zinc-400 text-xs flex items-center gap-1 mt-1 font-sans">
-                      <MapPin className="w-3.5 h-3.5 text-zinc-455" /> {proj.location}
+                      <MapPin className="w-3.5 h-3.5 text-zinc-400" /> {proj.location}
                     </p>
                   </div>
 
@@ -175,7 +175,7 @@ export default function ProjectGallery() {
               initial={{ scale: 0.9, y: 15 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 15 }}
-              className="bg-white dark:bg-zinc-905 bg-slate-50 dark:bg-zinc-950 w-full max-w-2xl rounded-3xl overflow-hidden shadow-2xl relative border border-slate-100 dark:border-zinc-800"
+              className="bg-white dark:bg-zinc-950 w-full max-w-2xl rounded-3xl overflow-hidden shadow-2xl relative border border-slate-100 dark:border-zinc-800"
             >
               {/* Close Button top corner */}
               <button
@@ -237,7 +237,7 @@ export default function ProjectGallery() {
                     </h4>
                     <div className="grid grid-cols-2 gap-2">
                       {selectedProject.highlights.map((hil, i) => (
-                        <div key={i} className="flex items-center gap-2 text-xs text-slate-650 dark:text-zinc-400 font-mono">
+                        <div key={i} className="flex items-center gap-2 text-xs text-slate-600 dark:text-zinc-400 font-mono">
                           <Layout className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
                           <span>{hil}</span>
                         </div>

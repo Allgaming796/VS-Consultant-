@@ -54,7 +54,11 @@ export default function ReviewForm() {
 
     const updatedReviews = [newReview, ...reviews];
     setReviews(updatedReviews);
-    localStorage.setItem('vs_arch_reviews', JSON.stringify(updatedReviews));
+    try {
+      localStorage.setItem('vs_arch_reviews', JSON.stringify(updatedReviews));
+    } catch (e) {
+      // Silently swallow third-party storage restrictions inside sandboxed frames
+    }
 
     // Reset Form States
     setUserName('');

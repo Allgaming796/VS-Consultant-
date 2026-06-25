@@ -285,7 +285,7 @@ export default function CostCalculator({ onApplyEstimate }: CostCalculatorProps)
                 <span className="font-mono text-slate-800 dark:text-zinc-200 font-medium">{formatCurrency(estimates.structuralDrafts)}</span>
               </div>
               <div className="h-1.5 w-full bg-slate-200 dark:bg-zinc-800 rounded-full overflow-hidden">
-                <div className="h-full bg-slate-650 dark:bg-zinc-500 rounded-full" style={{ width: '15%' }} />
+                <div className="h-full bg-slate-600 dark:bg-zinc-500 rounded-full" style={{ width: '15%' }} />
               </div>
             </div>
 

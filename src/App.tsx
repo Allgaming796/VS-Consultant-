@@ -5,44 +5,54 @@ import {
   MapPin, 
   Phone, 
   Mail, 
-  Send, 
+  Clock, 
+  ArrowRight, 
+  Award, 
+  Users, 
   CheckCircle, 
-  Workflow, 
-  LayoutGrid, 
-  Sparkles, 
-  ArrowRight,
-  ShieldAlert,
-  DraftingCompass,
-  MessageSquare
+  Star, 
+  MessageSquare, 
+  Calendar,
+  Send,
+  Sparkles,
+  Info,
+  ChevronRight,
+  DraftingCompass
 } from 'lucide-react';
-
-import { ScreenType } from './types';
-import { DESIGN_SERVICES, COMPLETED_PROJECTS } from './data';
-
 import Navigation from './components/Navigation';
-import BlueprintVisualizer from './components/BlueprintVisualizer';
-import CostCalculator from './components/CostCalculator';
 import ProjectGallery from './components/ProjectGallery';
-import ReviewForm from './components/ReviewForm';
+import CostCalculator from './components/CostCalculator';
 import FAQs from './components/FAQs';
+import BlueprintVisualizer from './components/BlueprintVisualizer';
+import ReviewForm from './components/ReviewForm';
+import { ScreenType } from './types';
+import { DESIGN_SERVICES } from './data';
 
 export default function App() {
-  const [activeScreen, setActiveScreen] = useState<ScreenType>('home');
+  const [activeScreen, setScreen] = useState<ScreenType>('home');
   const [darkMode, setDarkMode] = useState<boolean>(false);
-  const [estimateDraft, setEstimateDraft] = useState<string>('');
   
-  // Lead submission form state
+  // Lead Form States
   const [clientName, setClientName] = useState<string>('');
   const [clientContact, setClientContact] = useState<string>('');
-  const [selectedService, setSelectedService] = useState<string>('Flat & Home Interiors');
   const [projectBrief, setProjectBrief] = useState<string>('');
+  const [estimateDraft, setEstimateDraft] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [submitSuccess, setSubmitSuccess] = useState<boolean>(false);
 
   // Initialize Dark Mode based on preference
   useEffect(() => {
-    const isDark = localStorage.getItem('theme') === 'dark' || 
-                   (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    let isDark = false;
+    try {
+      isDark = localStorage.getItem('theme') === 'dark' || 
+               (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    } catch (e) {
+      try {
+        isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      } catch (mediaErr) {
+        isDark = false;
+      }
+    }
     setDarkMode(isDark);
     if (isDark) {
       document.documentElement.classList.add('dark');
@@ -51,391 +61,306 @@ export default function App() {
     }
   }, []);
 
-  // Sync Dark Mode toggles
-  const handleThemeToggle = (newDark: boolean) => {
+  const toggleDarkMode = (newDark: boolean) => {
     setDarkMode(newDark);
     if (newDark) {
       document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
+      try {
+        localStorage.setItem('theme', 'dark');
+      } catch (e) {
+        // Silently swallow third-party storage restrictions inside sandboxed frames
+      }
     } else {
       document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
+      try {
+        localStorage.setItem('theme', 'light');
+      } catch (e) {
+        // Silently swallow third-party storage restrictions inside sandboxed frames
+      }
     }
-  };
-
-  // Coupling the Estimator output to the Contact form
-  const handleApplyEstimate = (estimateText: string) => {
-    setEstimateDraft(estimateText);
-    setProjectBrief(estimateText);
-    setSelectedService('Complete Architectural Consultation');
-    setActiveScreen('contact');
-    
-    // Smooth scroll back to top to ensure visibility of contact form
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // Submit Lead Form
   const handleSubmitLead = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!clientName.trim() || !clientContact.trim()) return;
-
-    handleWhatsAppBook();
-    setSubmitSuccess(true);
+    setIsSubmitting(true);
+    
+    // Simulate API call
+    setTimeout(() => {
+      setIsSubmitting(false);
+      setSubmitSuccess(true);
+      setClientName('');
+      setClientContact('');
+      setProjectBrief('');
+    }, 1200);
   };
 
   // Submit via WhatsApp
-  const handleWhatsAppBook = () => {
-    const defaultNumber = '91798575518';
-    let message = `Hello VS Architect! I would like to book a design consultation.`;
-    
-    const details: string[] = [];
-    if (clientName.trim()) details.push(`Name: ${clientName.trim()}`);
-    if (clientContact.trim()) details.push(`Contact: ${clientContact.trim()}`);
-    if (selectedService) details.push(`Service: ${selectedService}`);
-    if (projectBrief.trim()) details.push(`Brief: ${projectBrief.trim()}`);
+  const handleWhatsAppConsult = () => {
+    const textMessage = `Hello VS Architect! I would like to consult for my project.\n\n*Name*: ${clientName || 'N/A'}\n*Contact*: ${clientContact || 'N/A'}\n*Brief*: ${projectBrief || 'N/A'}\n\n${estimateDraft ? `*Pricing Plan Details*:\n${estimateDraft}` : ''}`;
+    const encoded = encodeURIComponent(textMessage);
+    window.open(`https://wa.me/91798575518?text=${encoded}`, '_blank');
+  };
 
-    if (details.length > 0) {
-      message += `\n\n*My Enquiry Details*:\n` + details.join('\n');
-    }
-    
-    const encodedText = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/${defaultNumber}?text=${encodedText}`;
-    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+  // Transition variants
+  const pageVariants = {
+    initial: { opacity: 0, y: 15 },
+    animate: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' } },
+    exit: { opacity: 0, y: -15, transition: { duration: 0.3 } }
   };
 
   return (
-    <div className="min-h-screen bg-[#F0EDE8] dark:bg-zinc-950 text-slate-900 dark:text-zinc-100 transition-colors duration-300 flex flex-col font-sans">
+    <div className="min-h-screen font-sans bg-[#F5F2EB] dark:bg-zinc-950 text-slate-800 dark:text-zinc-200 transition-colors duration-300">
       
-      {/* Top Header menu */}
+      {/* Header/Navigation */}
       <Navigation 
         activeScreen={activeScreen} 
-        setScreen={setActiveScreen} 
+        setScreen={setScreen} 
         darkMode={darkMode} 
-        setDarkMode={handleThemeToggle} 
+        setDarkMode={toggleDarkMode} 
       />
 
-      {/* Main Screen Container with smooth sliding transitions */}
-      <main className="flex-1 pt-24 pb-16">
+      {/* Main Body */}
+      <main className="pt-24 pb-16 px-6 md:px-12 max-w-7xl mx-auto space-y-16">
+        
         <AnimatePresence mode="wait">
           <motion.div
             key={activeScreen}
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -15 }}
-            transition={{ duration: 0.35, ease: 'easeInOut' }}
-            className="px-6 md:px-12 max-w-7xl mx-auto w-full"
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            variants={pageVariants}
           >
-            {/* SCREEN 1: HOME */}
+            {/* ----------------- HOME SCREEN ----------------- */}
             {activeScreen === 'home' && (
               <div className="space-y-16">
                 
-                {/* HERO SECTION DECK */}
-                <div className="relative min-h-[80vh] flex items-center justify-start rounded-3xl overflow-hidden bg-slate-950 text-white p-8 md:p-16 border border-slate-900 shadow-2xl">
-                  
-                  {/* Grid layout wallpaper */}
-                  <div className="absolute inset-0 opacity-15 pointer-events-none">
-                    <div className="w-full h-full" style={{
-                      backgroundImage: `
-                        linear-gradient(rgba(200,169,110,0.25) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(200,169,110,0.25) 1px, transparent 1px)
-                      `,
-                      backgroundSize: '60px 60px'
-                    }} />
-                  </div>
-
-                  {/* Faint watermark graphic */}
+                {/* Hero section */}
+                <section className="relative overflow-hidden py-12 md:py-20 rounded-3xl bg-slate-900 text-white p-8 md:p-12 shadow-xl border border-slate-800">
+                  {/* Backdrop Giant Letter Watermark */}
                   <div className="absolute right-[-1%] bottom-[-5%] font-serif text-[38vw] font-bold text-white/[0.02] select-none pointer-events-none leading-none tracking-tighter">
                     VS
                   </div>
 
-                  {/* Telemetry labels of Eidgha Road, UP */}
-                  <span className="absolute top-6 left-8 font-mono text-[9px] text-[#C8A96E]/50 tracking-wider hidden sm:block">
-                    COORDS: 28.6100°N · 79.9099°E
-                  </span>
-                  <span className="absolute top-6 right-8 font-mono text-[9px] text-[#C8A96E]/50 tracking-wider hidden sm:block">
-                    SHAHJAHANPUR · UTTAR PRADESH
-                  </span>
-                  <span className="absolute bottom-6 right-8 font-mono text-[9px] text-[#C8A96E]/40 tracking-wider hidden sm:block">
-                    ARCHITECTURAL &amp; INTERIOR SERVICES
-                  </span>
-
-                  {/* Hero Copy */}
-                  <div className="relative z-10 max-w-2xl space-y-6 pt-8">
-                    <div className="flex items-center gap-2">
-                      <span className="w-6 h-[1.5px] bg-[#C8A96E]" />
-                      <span className="text-[10px] font-mono tracking-widest text-[#C8A96E] uppercase font-bold">
-                        Est. Shahjahanpur, UP
-                      </span>
-                    </div>
-
+                  <div className="relative z-10 max-w-3xl space-y-6">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-600/20 text-amber-400 font-mono text-[10px] uppercase tracking-widest font-bold">
+                      <Sparkles className="w-3.5 h-3.5" /> SHAHJAHANPUR, UP
+                    </span>
                     <h1 className="text-4xl sm:text-6xl font-serif font-light leading-tight tracking-tight">
-                      Every space <br />
-                      <em className="text-[#C8A96E] font-normal not-italic">tells a story.</em> <br />
-                      We help you tell yours.
+                      Designing Spaces of <br />
+                      <em className="text-amber-400 not-italic font-normal">Quiet Luxury</em> &amp; Spatial Flow
                     </h1>
-
-                    <p className="text-sm md:text-base text-zinc-400 font-light leading-relaxed max-w-md">
-                      Architecture and bespoke interior rendering that is thoughtful, sustainable, and built to endure — customized entirely around your life.
+                    <p className="text-sm md:text-base text-zinc-300 leading-relaxed font-sans max-w-2xl font-light">
+                      We believe in structural integrity, organic wood panel accents, intelligent daylight distribution, and direct transparency. Guided by decades of regional layout planning, we craft customized flats, workspaces, and gardens.
                     </p>
 
                     <div className="flex flex-wrap gap-4 pt-4">
-                      <button
-                        onClick={() => setActiveScreen('portfolio')}
-                        className="py-3 px-6 bg-[#C8A96E] hover:bg-[#b5955b] text-white rounded-lg text-xs uppercase tracking-wider font-mono font-bold transition-all shadow-md hover:scale-103 active:scale-97 cursor-pointer"
-                      >
-                        Explore Gallery
-                      </button>
-                      <button
-                        onClick={() => setActiveScreen('estimator')}
-                        className="py-3 px-6 bg-slate-900 border border-white/20 hover:border-[#C8A96E] text-white hover:text-[#C8A96E] rounded-lg text-xs uppercase tracking-wider font-mono font-semibold transition-all cursor-pointer"
-                      >
-                        Estimate Budget
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* THE BLUEPRINT INTERACTIVE GRID BANNER */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-[#E8E2D9] dark:bg-zinc-900/60 p-8 md:p-12 rounded-3xl border border-white/40 dark:border-zinc-800 transition-colors duration-300">
-                  <div className="lg:col-span-5 space-y-4">
-                    <span className="text-xs font-mono font-bold text-amber-600 dark:text-amber-400 uppercase tracking-widest block">
-                      OUR MANDATE
-                    </span>
-                    <h2 className="text-3.5xl font-serif font-light text-slate-900 dark:text-zinc-100 leading-tight">
-                      Design that is <em className="text-amber-600 dark:text-amber-400">purposeful</em> in every details
-                    </h2>
-                    <p className="text-slate-650 dark:text-zinc-400 text-xs sm:text-sm leading-relaxed font-sans font-light">
-                      We are dedicated to enhancing quality of life through design that is thoughtful, sustainable, elegant, and inspirational. Excellence isn't just a promise — it's the minimum standard we hold ourselves to for Shahjahanpur.
-                    </p>
-
-                    <div className="bg-white/80 dark:bg-zinc-950/80 p-5 rounded-2xl border border-white/50 dark:border-zinc-900 shadow-sm space-y-1">
-                      <div className="text-3xl font-serif text-amber-600 dark:text-amber-400">10+ Years</div>
-                      <p className="text-[11px] text-slate-500 dark:text-zinc-400 leading-snug">
-                        Of combined architectural and structural drafting experience across Residential &amp; Corporate sectors.
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Interactive teaser element - blueprint visually representation */}
-                  <div className="lg:col-span-7 bg-slate-950 text-sky-400 rounded-2xl p-6 h-80 relative overflow-hidden flex flex-col justify-between border border-slate-900 shadow-inner">
-                    <div className="absolute inset-0 opacity-10 pointer-events-none">
-                      <div className="w-full h-full" style={{
-                        backgroundImage: `
-                          linear-gradient(rgba(245, 158, 11, 0.2) 1px, transparent 1px),
-                          linear-gradient(90deg, rgba(245, 158, 11, 0.2) 1px, transparent 1px)
-                        `,
-                        backgroundSize: '40px 40px'
-                      }} />
-                    </div>
-
-                    <div className="flex justify-between font-mono text-[10px] text-zinc-400">
-                      <span>BLUEPRINT PREVIEW //</span>
-                      <span className="text-emerald-400 animate-pulse">● ENGINE LIVE</span>
-                    </div>
-
-                    {/* Simple artistic graphic schematic representing clean layouts */}
-                    <div className="w-full h-32 relative flex items-center justify-center">
-                      <svg className="w-full h-full text-[#C8A96E]/30" viewBox="0 0 400 120" stroke="currentColor" strokeWidth="0.75" fill="none">
-                        <rect x="20" y="10" width="360" height="100" rx="4" />
-                        <line x1="120" y1="10" x2="120" y2="110" strokeDasharray="4" />
-                        <line x1="280" y1="10" x2="280" y2="110" strokeDasharray="4" />
-                        <circle cx="120" cy="60" r="15" />
-                        <circle cx="280" cy="60" r="15" />
-                        {/* Text labels */}
-                        <text x="50" y="40" fill="gray" fontSize="8" fontFamily="monospace">BEDROOM A</text>
-                        <text x="160" y="40" fill="gray" fontSize="8" fontFamily="monospace">LIVING SPACE</text>
-                        <text x="310" y="40" fill="gray" fontSize="8" fontFamily="monospace">DECK</text>
-                        {/* Dimension labels */}
-                        <text x="175" y="90" fill="gold" fontSize="8" fontFamily="monospace">4500 SQFT</text>
-                      </svg>
-                    </div>
-
-                    <div className="flex justify-between items-end">
-                      <div className="space-y-1">
-                        <span className="text-[10px] block font-mono text-zinc-500 uppercase">Featured layout draft</span>
-                        <span className="text-xs text-white leading-tight font-serif italic block">Integrated Green Atrium At Saddar Bazar</span>
-                      </div>
                       <button 
-                        onClick={() => setActiveScreen('services')}
-                        className="text-xs font-mono text-amber-500 hover:text-amber-400 flex items-center gap-1.5 font-semibold py-1.5 px-3 rounded bg-zinc-900 border border-zinc-800"
+                        onClick={() => setScreen('portfolio')}
+                        className="px-6 py-3 rounded-xl bg-amber-600 text-white font-semibold text-xs font-mono uppercase tracking-widest hover:bg-amber-700 transition flex items-center gap-1 cursor-pointer"
                       >
-                        Launch board <ArrowRight className="w-3 h-3" />
+                        Explore Catalog <ArrowRight className="w-3.5 h-3.5" />
+                      </button>
+                      <button 
+                        onClick={() => setScreen('estimator')}
+                        className="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-750 text-amber-400 border border-amber-600/30 font-semibold text-xs font-mono uppercase tracking-widest transition flex items-center gap-1 cursor-pointer"
+                      >
+                        Pricing Estimator <Compass className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   </div>
-                </div>
 
-                {/* THE 3 CORE BRAND PILLARS */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                  {/* Pillar 1 */}
-                  <div className="p-6 bg-white dark:bg-zinc-900 rounded-2xl border border-slate-100 dark:border-zinc-850 hover:shadow-md transition">
-                    <div className="w-10 h-10 rounded-lg bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-4 border border-amber-600/10">
-                      <Workflow className="w-5 h-5" />
-                    </div>
-                    <h3 className="text-lg font-serif font-semibold text-slate-800 dark:text-zinc-100">
-                      Innovative Solutions
-                    </h3>
-                    <p className="text-xs text-slate-600 dark:text-zinc-400 mt-2 leading-relaxed">
-                      Leveraging state-of-the-art interactive 3D visualizations and computer-aided drafting to let you walk through your home before work begins.
-                    </p>
+                  {/* High end image representation */}
+                  <div className="absolute right-0 top-0 bottom-0 w-1/3 hidden lg:block opacity-45">
+                    <img 
+                      src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1000" 
+                      alt="Modern minimalist home facade"
+                      referrerPolicy="no-referrer"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-transparent to-transparent" />
                   </div>
+                </section>
 
-                  {/* Pillar 2 */}
-                  <div className="p-6 bg-white dark:bg-zinc-900 rounded-2xl border border-slate-100 dark:border-zinc-850 hover:shadow-md transition">
-                    <div className="w-10 h-10 rounded-lg bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-4 border border-amber-600/10">
-                      <LayoutGrid className="w-5 h-5" />
-                    </div>
-                    <h3 className="text-lg font-serif font-semibold text-slate-800 dark:text-zinc-100">
-                      Enduring Quality
-                    </h3>
-                    <p className="text-xs text-slate-600 dark:text-zinc-400 mt-2 leading-relaxed">
-                      From waterproof modular bases to robust hardware locks, every single material selection is optimized to remain pristine for years.
-                    </p>
-                  </div>
-
-                  {/* Pillar 3 */}
-                  <div className="p-6 bg-white dark:bg-zinc-900 rounded-2xl border border-slate-100 dark:border-zinc-850 hover:shadow-md transition">
-                    <div className="w-10 h-10 rounded-lg bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-4 border border-amber-600/10">
-                      <Sparkles className="w-5 h-5" />
-                    </div>
-                    <h3 className="text-lg font-serif font-semibold text-slate-800 dark:text-zinc-100">
-                      Client-Centred Approach
-                    </h3>
-                    <p className="text-xs text-slate-600 dark:text-zinc-400 mt-2 leading-relaxed">
-                      Adapting layout plans around your customized routine, family structures, or working shifts to build spaces reflecting who you are.
-                    </p>
-                  </div>
-                </div>
-
-                {/* WHY VS ARCHITECT GRID (Aesthetic commitment) */}
-                <div className="border-t border-slate-300 dark:border-zinc-850 pt-16">
-                  <div className="mb-10 text-center">
-                    <span className="text-xs tracking-widest font-mono text-amber-600 dark:text-amber-400 uppercase font-bold block mb-2">
-                      Philosophy &amp; Values
+                {/* Studio Philosophy Overview */}
+                <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-white dark:bg-zinc-900 border border-slate-100 dark:border-zinc-900 p-6 md:p-10 rounded-3xl">
+                  <div className="lg:col-span-7 space-y-4">
+                    <span className="text-xs font-mono text-amber-600 dark:text-amber-400 uppercase tracking-widest font-bold block">
+                      OUR PHILOSOPHY
                     </span>
-                    <h2 className="text-3.5xl font-serif text-slate-900 dark:text-zinc-100">
-                      A commitment to <em>excellence</em>, by every measure
+                    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-light text-slate-900 dark:text-zinc-100 leading-tight">
+                      We plan layouts with physical <em>honesty</em> and absolute custom care.
                     </h2>
-                  </div>
+                    <p className="text-slate-600 dark:text-zinc-400 text-xs sm:text-sm leading-relaxed font-sans font-light">
+                      Our design studio is located at Eidgha Road, Shahjahanpur. We curate architectural layout planning and custom carpentry from initial mood boarding up to active turnkey management. No hidden bills, only highly tailored materials and premium workmanship.
+                    </p>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 font-sans">
-                    <div className="flex gap-4">
-                      <div className="font-serif text-3xl text-amber-600 dark:text-amber-450 opacity-40">I</div>
-                      <div>
-                        <h4 className="text-base font-semibold text-slate-805 dark:text-zinc-150">Customized to You</h4>
-                        <p className="text-xs text-slate-600 dark:text-zinc-400 leading-relaxed mt-1">
-                          No duplicates. We reject assembly-line templating. Every layout begins as a clean paper sheet tailored around your specific visual desires.
-                        </p>
+                    <div className="grid grid-cols-2 gap-4 pt-4">
+                      <div className="flex gap-2.5">
+                        <CheckCircle className="w-5 h-5 text-amber-600 dark:text-amber-450 shrink-0 mt-0.5" />
+                        <div>
+                          <h4 className="font-semibold text-xs text-slate-900 dark:text-zinc-100">Bespoke Joinery</h4>
+                          <p className="text-[11px] text-slate-500 leading-normal">Premium wood panel, custom closets &amp; kitchen hydraulic layouts.</p>
+                        </div>
                       </div>
-                    </div>
-
-                    <div className="flex gap-4">
-                      <div className="font-serif text-3xl text-amber-600 dark:text-amber-450 opacity-40">II</div>
-                      <div>
-                        <h4 className="text-base font-semibold text-slate-805 dark:text-zinc-150">Aesthetic + Function</h4>
-                        <p className="text-xs text-slate-600 dark:text-zinc-400 leading-relaxed mt-1">
-                          We never sacrifice storage efficiency for pure style, nor elegance for plain utility. We balance both variables seamlessly.
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex gap-4">
-                      <div className="font-serif text-3xl text-amber-600 dark:text-amber-450 opacity-40">III</div>
-                      <div>
-                        <h4 className="text-base font-semibold text-slate-805 dark:text-zinc-150">Uncompromising Materials</h4>
-                        <p className="text-xs text-slate-600 dark:text-zinc-400 leading-relaxed mt-1">
-                          We only specify reliable, certified vendors. Quality is integrated at every tier, safeguarding your financial investment.
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex gap-4">
-                      <div className="font-serif text-3xl text-amber-600 dark:text-amber-450 opacity-40">IV</div>
-                      <div>
-                        <h4 className="text-base font-semibold text-slate-805 dark:text-zinc-150">Local Root, Global Vision</h4>
-                        <p className="text-xs text-slate-600 dark:text-zinc-400 leading-relaxed mt-1">
-                          Operating directly from Shahjahanpur, we understand local seasonal weather changes, brick masonry sources, combined with standard global designs.
-                        </p>
+                      <div className="flex gap-2.5">
+                        <CheckCircle className="w-5 h-5 text-amber-600 dark:text-amber-450 shrink-0 mt-0.5" />
+                        <div>
+                          <h4 className="font-semibold text-xs text-slate-900 dark:text-zinc-100">Absolute Transparency</h4>
+                          <p className="text-[11px] text-slate-500 leading-normal">Direct pricing models matching our digital estimator outputs.</p>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                {/* HIGHLIGHTED PROJECTS SLIDER TEASER */}
-                <div className="bg-white dark:bg-zinc-900 border border-slate-100 dark:border-zinc-850 p-6 md:p-8 rounded-3xl">
-                  <div className="flex justify-between items-end mb-6">
+                  {/* Core studio statistics panel */}
+                  <div className="lg:col-span-5 bg-[#FDFDFD] dark:bg-zinc-950 border border-slate-100 dark:border-zinc-850 p-6 rounded-2xl grid grid-cols-2 gap-6 shadow-sm">
+                    <div className="space-y-1">
+                      <div className="text-3xl font-serif text-amber-600 dark:text-amber-400">10+ Years</div>
+                      <p className="text-[10px] font-mono uppercase tracking-wider text-slate-400">Regional Experience</p>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="text-3xl font-serif text-amber-600 dark:text-amber-400">150+</div>
+                      <p className="text-[10px] font-mono uppercase tracking-wider text-slate-400">Layouts Completed</p>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="text-3xl font-serif text-amber-600 dark:text-amber-400">99%</div>
+                      <p className="text-[10px] font-mono uppercase tracking-wider text-slate-400">Client Approval</p>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="text-3xl font-serif text-amber-600 dark:text-amber-400">4.9★</div>
+                      <p className="text-[10px] font-mono uppercase tracking-wider text-slate-400">Average Rating</p>
+                    </div>
+                  </div>
+                </section>
+
+                {/* Staggered Featured project with coordinate mapping banner */}
+                <section className="space-y-6">
+                  <div className="flex justify-between items-end">
                     <div>
-                      <span className="text-xs font-mono uppercase tracking-wider text-amber-600 dark:text-amber-400">
-                        Visual Portfolio Teaser
-                      </span>
-                      <h3 className="text-2xl font-serif text-slate-900 dark:text-zinc-100 leading-tight">
-                        Featured Structures
-                      </h3>
+                      <span className="text-xs font-mono text-slate-400 uppercase tracking-widest block">FEATURED HIGH-RESOLUTION WORKS</span>
+                      <h3 className="text-2xl font-serif text-slate-900 dark:text-zinc-100">Saddar Bazar Showcase</h3>
                     </div>
-                    <button
-                      onClick={() => setActiveScreen('portfolio')}
-                      className="text-xs font-mono font-bold text-amber-600 hover:text-amber-700 dark:text-amber-400 flex items-center gap-1 cursor-pointer"
+                    <button 
+                      onClick={() => setScreen('portfolio')}
+                      className="text-xs font-mono uppercase tracking-wider text-amber-600 hover:text-amber-700 flex items-center gap-1"
                     >
-                      Browse All Catalog <ArrowRight className="w-3.5 h-3.5" />
+                      All Projects <ChevronRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {COMPLETED_PROJECTS.slice(0, 2).map((p) => (
-                      <div 
-                        key={p.id} 
-                        onClick={() => setActiveScreen('portfolio')}
-                        className="group relative h-64 rounded-2xl overflow-hidden cursor-pointer border border-slate-100 dark:border-zinc-850 shadow-sm"
-                      >
-                        <img 
-                          src={p.image} 
-                          alt={p.title} 
-                          referrerPolicy="no-referrer"
-                          className="w-full h-full object-cover group-hover:scale-103 transitionduration-300"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent flex flex-col justify-end p-4">
-                          <span className="text-[9px] font-mono text-amber-500 uppercase tracking-widest">{p.category}</span>
-                          <h4 className="text-sm font-sans text-white font-semibold leading-tight">{p.title}</h4>
-                          <p className="text-[10px] text-zinc-300 font-mono mt-0.5">{p.location}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                  <div className="relative group rounded-3xl overflow-hidden h-[450px] shadow-lg bg-slate-900">
+                    <img 
+                      src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80&w=1400" 
+                      alt="Modern interior atrium showcase"
+                      referrerPolicy="no-referrer"
+                      className="w-full h-full object-cover group-hover:scale-101 transition-transform duration-700 opacity-80"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
+                    
+                    {/* Visual coordinates metadata annotation */}
+                    <div className="absolute bottom-6 left-6 md:left-12 max-w-lg space-y-3 text-white">
+                      <span className="px-2.5 py-0.5 rounded bg-amber-600 font-mono text-[9px] uppercase tracking-widest">
+                        RESIDENTIAL DEVELOPMENT
+                      </span>
+                      <h4 className="text-2xl font-serif font-semibold">
+                        Integrated Green Atrium At Saddar Bazar
+                      </h4>
+                      <p className="text-xs text-zinc-300 leading-relaxed font-sans font-light">
+                        A beautiful custom project completed in 2024. Featuring a vertical indoor micro-atrium that filters indirect skylight to all three floors of the residence, completely reducing morning HVAC loads by 25%.
+                      </p>
+                      <span className="text-xs text-white leading-tight font-serif italic block">
+                        Designed, drafted, &amp; managed by VS Architect Studio.
+                      </span>
+                    </div>
 
-                {/* TESTIMONIALS MODULE */}
-                <div className="pt-8">
-                  <div className="mb-8 text-center">
-                    <span className="text-xs font-mono tracking-widest uppercase font-bold text-amber-600 dark:text-amber-400 block">
-                      Client Feedback
+                    <div className="absolute top-6 right-6 font-mono text-[10px] text-amber-400/80 bg-black/50 backdrop-blur-md p-3 rounded-lg border border-white/10 hidden md:block">
+                      <span>ORIGIN AXIS: 28.61° N, 79.91° E</span>
+                    </div>
+                  </div>
+                </section>
+
+                {/* Milestones Steps (I, II, III, IV) */}
+                <section className="space-y-8">
+                  <div className="text-center max-w-xl mx-auto space-y-2">
+                    <span className="text-xs font-mono text-amber-600 dark:text-amber-400 uppercase tracking-widest font-bold">
+                      OUR COMPLETE ROADMAP
                     </span>
-                    <h2 className="text-3xl font-serif text-slate-900 dark:text-zinc-100">
-                      Verified Client Raves
+                    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif text-slate-900 dark:text-zinc-100 leading-tight">
+                      The Four Design <em>Milestones</em>
                     </h2>
+                    <p className="text-slate-600 dark:text-zinc-400 text-xs leading-relaxed">
+                      How we systematically turn raw client concepts into structurally sound, physically completed spatial assets.
+                    </p>
                   </div>
-                  <ReviewForm />
-                </div>
 
-                {/* FAQ SECTION */}
-                <div className="pt-12 border-t border-slate-100 dark:border-zinc-900">
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    {/* Step 1 */}
+                    <div className="p-6 rounded-2xl bg-white dark:bg-zinc-900 border border-slate-100 dark:border-zinc-850 space-y-4 shadow-sm hover:shadow-md transition">
+                      <div className="font-serif text-3xl text-amber-600 dark:text-amber-450 opacity-40">I</div>
+                      <h4 className="font-serif text-lg font-bold text-slate-900 dark:text-zinc-100">
+                        Discovery Consult
+                      </h4>
+                      <p className="text-xs text-slate-500 leading-relaxed">
+                        We analyze your plot, room sizes, natural light paths, and design inspirations at Eidgha Road or via digital consults.
+                      </p>
+                    </div>
+
+                    {/* Step 2 */}
+                    <div className="p-6 rounded-2xl bg-white dark:bg-zinc-900 border border-slate-100 dark:border-zinc-850 space-y-4 shadow-sm hover:shadow-md transition">
+                      <div className="font-serif text-3xl text-amber-600 dark:text-amber-450 opacity-40">II</div>
+                      <h4 className="font-serif text-lg font-bold text-slate-900 dark:text-zinc-100">
+                        3D Visual Rendering
+                      </h4>
+                      <p className="text-xs text-slate-500 leading-relaxed">
+                        We generate detailed layout walkthroughs, wood laminate selections, and ceiling lighting drafts to review.
+                      </p>
+                    </div>
+
+                    {/* Step 3 */}
+                    <div className="p-6 rounded-2xl bg-white dark:bg-zinc-900 border border-slate-100 dark:border-zinc-850 space-y-4 shadow-sm hover:shadow-md transition">
+                      <div className="font-serif text-3xl text-amber-600 dark:text-amber-450 opacity-40">III</div>
+                      <h4 className="font-serif text-lg font-bold text-slate-900 dark:text-zinc-100">
+                        Precise Blueprinting
+                      </h4>
+                      <p className="text-xs text-slate-500 leading-relaxed">
+                        Drafting complete AutoCAD sets including columns, structural concrete points, wiring, and kitchen plumbing risers.
+                      </p>
+                    </div>
+
+                    {/* Step 4 */}
+                    <div className="p-6 rounded-2xl bg-white dark:bg-zinc-900 border border-slate-100 dark:border-zinc-850 space-y-4 shadow-sm hover:shadow-md transition">
+                      <div className="font-serif text-3xl text-amber-600 dark:text-amber-450 opacity-40">IV</div>
+                      <h4 className="font-serif text-lg font-bold text-slate-900 dark:text-zinc-100">
+                        Turnkey Overseeing
+                      </h4>
+                      <p className="text-xs text-slate-500 leading-relaxed">
+                        Active physical site audits, contracting certified local carpenters, material procurement checkouts, and ultimate keys handover.
+                      </p>
+                    </div>
+                  </div>
+                </section>
+
+                {/* Elegant inline FAQs section on Home */}
+                <section className="pt-4">
                   <FAQs />
-                </div>
+                </section>
 
               </div>
             )}
 
-            {/* SCREEN 2: PORTFOLIO GALLERY */}
+            {/* ----------------- PORTFOLIO SCREEN ----------------- */}
             {activeScreen === 'portfolio' && (
-              <div className="space-y-8">
-                <div>
-                  <span className="text-amber-600 dark:text-amber-400 font-mono text-xs uppercase tracking-widest font-bold">
-                    Completed Works Catalog
+              <div className="space-y-6">
+                <div className="text-left space-y-2 max-w-2xl">
+                  <span className="text-xs font-mono text-amber-600 dark:text-amber-400 uppercase tracking-widest font-bold block">
+                    COMPLETED STRUCTURES PORTFOLIO
                   </span>
-                  <h1 className="text-4xl font-serif text-slate-900 dark:text-zinc-100 leading-tight">
-                    Where Aesthetics Meet <em>Function</em>
-                  </h1>
-                  <p className="text-slate-600 dark:text-zinc-400 text-xs sm:text-sm max-w-2xl mt-1">
-                    Carefully curated galleries representing flats, private bedrooms, luxury kitchen, garden terrace layouts, and offices in Uttar Pradesh. Click any visual to inspect blueprints and highlights.
+                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif text-slate-900 dark:text-zinc-100 leading-tight">
+                    A Legacy of Spatial <em>Finesse</em>
+                  </h2>
+                  <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
+                    Explore our projects across Shahjahanpur and surrounding cities. Use the navigation buttons below to sort by categories, or search for custom locations.
                   </p>
                 </div>
 
@@ -443,323 +368,298 @@ export default function App() {
               </div>
             )}
 
-            {/* SCREEN 3: SERVICES */}
+            {/* ----------------- SERVICES SCREEN ----------------- */}
             {activeScreen === 'services' && (
               <div className="space-y-12">
-                <div>
-                  <span className="text-amber-600 dark:text-amber-400 font-mono text-xs uppercase tracking-widest font-bold">
-                    Professional Scope
-                  </span>
-                  <h1 className="text-4xl font-serif text-slate-900 dark:text-zinc-100 leading-tight">
-                    Spatial Architecture <em>Tailored for Scale</em>
-                  </h1>
-                  <p className="text-slate-650 dark:text-zinc-400 text-xs sm:text-sm max-w-xl mt-1">
-                    Whether decorating an architectural bedroom haven or launching an office floor layout, discover starting estimates and custom details below.
-                  </p>
-                </div>
+                
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                  <div className="lg:col-span-4 space-y-4">
+                    <span className="text-xs font-mono text-amber-600 dark:text-amber-400 uppercase tracking-widest font-bold block">
+                      ARCHITECTURAL CAPABILITIES
+                    </span>
+                    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif text-slate-900 dark:text-zinc-100 leading-tight">
+                      Custom Curated <em>Design Solutions</em>
+                    </h2>
+                    <p className="text-slate-600 dark:text-zinc-400 text-xs sm:text-sm leading-relaxed font-light">
+                      We operate a specialized design office focused on high-end interiors, custom wood carvings, acoustic conference dividers, and rooftop meadow gardens. We adapt to both small cozy flats and massive commercial corporate hubs.
+                    </p>
 
-                {/* Services Catalog Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {DESIGN_SERVICES.map((svc) => (
-                    <div
-                      key={svc.id}
-                      className="bg-white dark:bg-zinc-950 border border-slate-100 dark:border-zinc-900 rounded-3xl p-6 hover:shadow-lg dark:hover:shadow-none transition duration-300 flex flex-col justify-between space-y-6"
+                    <button 
+                      onClick={() => setScreen('estimator')}
+                      className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-mono text-xs font-semibold uppercase tracking-wider transition shadow-sm cursor-pointer"
                     >
-                      <div className="space-y-3">
-                        <div className="relative h-44 w-full rounded-xl overflow-hidden bg-slate-100 dark:bg-zinc-900">
-                          <img
-                            src={svc.image}
+                      Calculate Construction Estimate <ArrowRight className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    {DESIGN_SERVICES.map((svc) => (
+                      <div 
+                        key={svc.id}
+                        className="bg-white dark:bg-zinc-900 border border-slate-100 dark:border-zinc-850 rounded-2xl overflow-hidden hover:shadow-md transition duration-300"
+                      >
+                        <div className="h-44 bg-slate-100 dark:bg-zinc-950 overflow-hidden relative">
+                          <img 
+                            src={svc.image} 
                             alt={svc.name}
                             referrerPolicy="no-referrer"
                             className="w-full h-full object-cover"
-                            loading="lazy"
                           />
-                          <span className="absolute top-2.5 left-2.5 bg-slate-900/80 backdrop-blur-md text-white border border-white/10 font-mono text-[9px] uppercase tracking-widest py-0.5 px-2 rounded-full">
-                            {svc.type}
+                          <span className="absolute bottom-3 left-3 bg-slate-900/90 text-white font-mono text-[9px] uppercase tracking-widest px-2.5 py-0.5 rounded border border-white/10">
+                            ₹{svc.estimateBaseRateRef}/sqft base rate
                           </span>
                         </div>
-
-                        <div>
-                          <span className="text-[10px] font-mono text-amber-600 dark:text-amber-400 font-semibold tracking-wider block">
-                            {svc.tag}
-                          </span>
-                          <h3 className="text-lg font-serif font-semibold text-slate-900 dark:text-zinc-100">
-                            {svc.name}
-                          </h3>
-                        </div>
-
-                        <p className="text-xs text-slate-600 dark:text-zinc-400 leading-relaxed font-sans">
-                          {svc.description}
-                        </p>
-
-                        <div className="pt-2 border-t border-slate-100 dark:border-zinc-900 space-y-1.5">
-                          {svc.details.map((detail, idx) => (
-                            <div key={idx} className="flex items-center gap-1.5 text-[11px] text-slate-700 dark:text-zinc-400">
-                              <span className="w-1 h-3 rounded-full bg-amber-600 dark:bg-amber-400 shrink-0" />
-                              <span>{detail}</span>
-                            </div>
-                          ))}
+                        <div className="p-5 space-y-3">
+                          <div>
+                            <span className="text-[10px] font-mono text-amber-600 dark:text-amber-400 uppercase tracking-wider block">
+                              {svc.tag}
+                            </span>
+                            <h3 className="text-base font-serif font-bold text-slate-900 dark:text-zinc-100">
+                              {svc.name}
+                            </h3>
+                          </div>
+                          <p className="text-xs text-slate-500 leading-relaxed">
+                            {svc.description}
+                          </p>
+                          <div className="pt-2.5 border-t border-slate-100 dark:border-zinc-800 space-y-1">
+                            {svc.details.map((det, i) => (
+                              <div key={i} className="flex items-center gap-1.5 text-[10.5px] text-slate-600 dark:text-zinc-400">
+                                <span className="w-1.5 h-1.5 bg-amber-600 rounded-full" />
+                                <span>{det}</span>
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       </div>
-
-                      <div className="pt-4 border-t border-slate-100 dark:border-zinc-900 flex justify-between items-center bg-slate-50 dark:bg-zinc-900/40 p-3 rounded-xl">
-                        <div className="font-mono text-[10px] text-zinc-500">
-                          <span>INDICATIVE RATE:</span>
-                          <span className="block font-semibold text-slate-900 dark:text-zinc-100 text-xs">
-                            ₹{svc.estimateBaseRateRef}/sq. ft.
-                          </span>
-                        </div>
-
-                        <button
-                          onClick={() => {
-                            setSelectedService(svc.name);
-                            setActiveScreen('estimator');
-                          }}
-                          className="py-1.5 px-3 bg-slate-150 border border-slate-200 dark:border-zinc-800 text-slate-800 dark:text-zinc-200 hover:bg-amber-600 hover:text-white dark:hover:bg-amber-700 dark:hover:text-white transition rounded-md font-mono text-[10px] uppercase font-bold"
-                        >
-                          Estimate Budget
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
 
-                {/* INTERACTIVE COMPASS / COORDINATE TELEMETRY PLAYGROUND */}
+                {/* Cohesive Blueprint Playground under Services */}
                 <div className="pt-8">
-                  <div className="mb-6">
-                    <span className="text-xs font-mono tracking-widest uppercase font-bold text-amber-600 dark:text-amber-400 block mb-1">
-                      Visual Playground Tool
-                    </span>
-                    <h3 className="text-2xl font-serif text-slate-900 dark:text-zinc-100">
-                      The Drafting Compass Board
-                    </h3>
-                    <p className="text-slate-500 dark:text-zinc-400 text-xs">
-                      Play around with structural column placements, grid sizing factors, and telemetry landmarks of Shahjahanpur.
-                    </p>
-                  </div>
                   <BlueprintVisualizer />
                 </div>
+
               </div>
             )}
 
-            {/* SCREEN 4: COST ESTIMATOR */}
+            {/* ----------------- ESTIMATOR SCREEN ----------------- */}
             {activeScreen === 'estimator' && (
-              <div className="space-y-8 animate-fade-in font-sans">
-                <div>
-                  <span className="text-amber-600 dark:text-amber-400 font-mono text-xs uppercase tracking-widest font-bold">
-                    Pricing Transparency Calculator
+              <div className="space-y-6">
+                <div className="text-left space-y-2 max-w-2xl">
+                  <span className="text-xs font-mono text-amber-600 dark:text-amber-400 uppercase tracking-widest font-bold block">
+                    ONLINE BUDGET CALCULATOR
                   </span>
-                  <h1 className="text-4xl font-serif text-slate-900 dark:text-zinc-100 leading-tight block">
-                    Interactive Budget <em>Calculation Sheet</em>
-                  </h1>
-                  <p className="text-slate-650 dark:text-zinc-400 text-xs sm:text-sm max-w-xl mt-1 leading-relaxed">
-                    Instantly assess standard layout modeling, material tiers, and site director fees matching your area square footage. Apply outputs directly to the consult queue.
+                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif text-slate-900 dark:text-zinc-100 leading-tight">
+                    Budget Planning, <em>Visualized</em>
+                  </h2>
+                  <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
+                    Select your project category, drag the slider to match your estimated square footage, choose laminate tiers, and click to automatically send the compiled plan parameters directly to our inquiry contact desk!
                   </p>
                 </div>
 
-                <CostCalculator onApplyEstimate={handleApplyEstimate} />
+                <CostCalculator 
+                  onApplyEstimate={(text) => {
+                    setEstimateDraft(text);
+                    setScreen('contact');
+                  }} 
+                />
               </div>
             )}
 
-            {/* SCREEN 5: CONTACT & CONSULT */}
+            {/* ----------------- CONTACT SCREEN ----------------- */}
             {activeScreen === 'contact' && (
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+              <div className="space-y-12">
                 
-                {/* Left side details card */}
-                <div className="lg:col-span-5 space-y-6 bg-amber-50/20 dark:bg-zinc-900 p-6 md:p-8 rounded-3xl border border-amber-600/10 dark:border-zinc-800">
-                  <div>
-                    <span className="text-xs font-mono font-bold text-amber-600 dark:text-amber-400 uppercase tracking-widest block">
-                      Connect Direct
-                    </span>
-                    <h1 className="text-3.5xl font-serif text-slate-900 dark:text-zinc-100 leading-tight">
-                      Let's begin your <em>story</em>
-                    </h1>
-                    <p className="text-slate-500 dark:text-zinc-450 text-xs leading-normal mt-1 block">
-                      Ready to structurally optimize your home, office, modular kitchen, or landscape? Drop an enquiry.
-                    </p>
-                  </div>
-
-                  <div className="space-y-4">
-                    {/* Address Detail */}
-                    <div className="flex items-start gap-3 text-xs">
-                      <div className="p-2 bg-white dark:bg-zinc-950 border border-slate-200/50 dark:border-zinc-850 rounded-lg text-amber-600 dark:text-amber-400 text-center">
-                        <MapPin className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <span className="block font-mono font-bold text-slate-400 dark:text-zinc-500 uppercase text-[9px] tracking-wider mb-0.5">
-                          Studio Location
-                        </span>
-                        <span className="block text-slate-800 dark:text-zinc-200">
-                          Eidgha Road, Shahjahanpur,<br />
-                          Uttar Pradesh, Pin 242001, India
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Phone Detail */}
-                    <div className="flex items-start gap-3 text-xs">
-                      <div className="p-2 bg-white dark:bg-zinc-950 border border-slate-200/50 dark:border-zinc-850 rounded-lg text-amber-600 dark:text-amber-400 text-center">
-                        <Phone className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <span className="block font-mono font-bold text-slate-400 dark:text-zinc-500 uppercase text-[9px] tracking-wider mb-0.5">
-                          Enquire Hotline
-                        </span>
-                        <a href="tel:+91798575518" className="block text-slate-800 dark:text-zinc-200 hover:text-amber-600 font-mono">
-                          +91 79857 5518
-                        </a>
-                      </div>
-                    </div>
-
-                    {/* WhatsApp Connection */}
-                    <div className="flex items-start gap-3 text-xs">
-                      <div className="p-2 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/30 rounded-lg text-emerald-600 dark:text-emerald-400 text-center">
-                        <MessageSquare className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <span className="block font-mono font-bold text-emerald-600 dark:text-emerald-400 uppercase text-[9px] tracking-wider mb-0.5">
-                          WhatsApp Booking Desk
-                        </span>
-                        <button
-                          onClick={handleWhatsAppBook}
-                          className="block text-slate-800 dark:text-zinc-200 hover:text-emerald-600 font-mono font-bold cursor-pointer transition-colors text-left"
-                        >
-                          +91 79857 5518 (Chat Now)
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Email Detail */}
-                    <div className="flex items-start gap-3 text-xs">
-                      <div className="p-2 bg-white dark:bg-zinc-950 border border-slate-200/50 dark:border-zinc-850 rounded-lg text-amber-600 dark:text-amber-400 text-center">
-                        <Mail className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <span className="block font-mono font-bold text-slate-400 dark:text-zinc-500 uppercase text-[9px] tracking-wider mb-0.5">
-                          Proposal Delivery
-                        </span>
-                        <a href="mailto:hello@vsarchitect.in" className="block text-slate-800 dark:text-zinc-200 hover:text-amber-600 font-mono">
-                          hello@vsarchitect.in
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Warning label constraint inside Iframe */}
-                  <div className="text-[10px] text-zinc-400 dark:text-zinc-500 leading-relaxed border-t border-slate-200 dark:border-zinc-800 pt-4 flex gap-1.5 items-start">
-                    <ShieldAlert className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
-                    <span>Inquiries submitted are cataloged internally on this client frame. We promise direct return correspondence within 24 hours.</span>
-                  </div>
+                <div className="text-left space-y-2 max-w-2xl">
+                  <span className="text-xs font-mono text-amber-600 dark:text-amber-400 uppercase tracking-widest font-bold block">
+                    ENQUIRY PORTAL
+                  </span>
+                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif text-slate-900 dark:text-zinc-100 leading-tight">
+                    Get in touch with <em>VS Architect</em>
+                  </h2>
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-zinc-400 leading-relaxed font-light">
+                    Have a plot or flat layout you'd like us to design? Submit the consultation form below, or bypass completely by sending a direct instant layout request via WhatsApp.
+                  </p>
                 </div>
 
-                {/* Right side Consult Form portal */}
-                <div className="lg:col-span-7 bg-white dark:bg-zinc-950 border border-slate-100 dark:border-zinc-900 rounded-3xl p-6 md:p-8 relative shadow-sm">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                   
-                  {submitSuccess && (
-                     <div className="absolute inset-0 bg-white/95 dark:bg-zinc-950/95 rounded-3xl flex flex-col justify-center items-center text-center p-6 z-10 transition-all font-sans">
-                        <div className="w-14 h-14 rounded-full bg-emerald-100 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-3">
-                          <CheckCircle className="w-8 h-8" />
+                  {/* Left Column info details */}
+                  <div className="lg:col-span-5 space-y-6">
+                    
+                    <div className="p-6 bg-white dark:bg-zinc-900 border border-slate-100 dark:border-zinc-850 rounded-2xl space-y-6 shadow-sm">
+                      <h3 className="text-lg font-serif font-semibold text-slate-900 dark:text-zinc-100">
+                        Studio Head Office
+                      </h3>
+
+                      <div className="space-y-4 text-xs font-sans">
+                        <div className="flex gap-3">
+                          <MapPin className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                          <div>
+                            <p className="font-semibold text-slate-900 dark:text-zinc-100">Physical Address</p>
+                            <p className="text-slate-500 dark:text-zinc-400 leading-normal mt-0.5">Eidgha Road, near Civil Lines, Shahjahanpur, Uttar Pradesh - 242001, India.</p>
+                          </div>
                         </div>
-                        <h4 className="font-serif text-xl text-slate-905 dark:text-zinc-100">Inquiry Received</h4>
-                        <p className="text-xs text-slate-500 dark:text-zinc-400 font-light max-w-sm mt-2">
-                           Thank you, <strong>{clientName}</strong>! Your structural brief was ingested successfully. Our representative will contact you shortly on <strong>{clientContact}</strong>.
+
+                        <div className="flex gap-3">
+                          <Phone className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                          <div>
+                            <p className="font-semibold text-slate-900 dark:text-zinc-100">WhatsApp / Call</p>
+                            <p className="text-slate-500 dark:text-zinc-400 leading-normal mt-0.5">+91 79857 55180</p>
+                          </div>
+                        </div>
+
+                        <div className="flex gap-3">
+                          <Mail className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                          <div>
+                            <p className="font-semibold text-slate-900 dark:text-zinc-100">E-mail Correspondence</p>
+                            <p className="text-slate-500 dark:text-zinc-400 leading-normal mt-0.5">contact@vsarchitect.in</p>
+                          </div>
+                        </div>
+
+                        <div className="flex gap-3">
+                          <Clock className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                          <div>
+                            <p className="font-semibold text-slate-900 dark:text-zinc-100">Operating Hours</p>
+                            <p className="text-slate-500 dark:text-zinc-400 leading-normal mt-0.5">Monday to Saturday: 10:00 AM — 07:00 PM</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="p-6 bg-amber-50/70 border border-amber-200 dark:bg-amber-950/20 dark:border-amber-900/30 rounded-2xl space-y-2">
+                      <h4 className="text-xs font-mono font-bold text-slate-800 dark:text-zinc-200 uppercase tracking-wider flex items-center gap-1.5">
+                        <Award className="w-4 h-4 text-amber-600" /> TIMELINE &amp; DESIGN COMMITMENT
+                      </h4>
+                      <p className="text-[11px] text-slate-600 dark:text-zinc-400 leading-relaxed">
+                        Inquiries submitted are cataloged internally on this client frame. We promise direct return correspondence within 24 hours. If an estimate template is active below, it will automatically append.
+                      </p>
+                    </div>
+
+                  </div>
+
+                  {/* Right Column Lead Form */}
+                  <div className="lg:col-span-7 bg-white dark:bg-zinc-900 border border-slate-100 dark:border-zinc-850 p-6 md:p-8 rounded-3xl relative shadow-md">
+                    
+                    {submitSuccess ? (
+                      <div className="absolute inset-0 bg-white/95 dark:bg-zinc-900/95 rounded-3xl flex flex-col justify-center items-center text-center p-8 z-20">
+                        <div className="w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-4">
+                          <CheckCircle className="w-8 h-8 animate-bounce" />
+                        </div>
+                        <h4 className="font-serif text-xl text-slate-900 dark:text-zinc-100">Inquiry Received</h4>
+                        <p className="text-xs text-slate-500 dark:text-zinc-400 max-w-sm mt-2 leading-relaxed">
+                          Your draft layout request has been cataloged. Our Lead Architect at Eidgha Road will contact you via WhatsApp shortly.
                         </p>
-                        <button 
-                          onClick={() => { setSubmitSuccess(false); setEstimateDraft(''); }}
-                          className="mt-6 py-2 px-4 rounded-xl border border-zinc-200 dark:border-zinc-800 text-[11px] font-mono hover:bg-slate-50 text-zinc-600 dark:text-zinc-300 transition-all"
-                        >
-                          Clear &amp; Start fresh enquiry
-                        </button>
-                     </div>
-                  )}
+                        <div className="flex gap-3 mt-6">
+                          <button
+                            onClick={() => { setSubmitSuccess(false); setEstimateDraft(''); }}
+                            className="px-4 py-2 bg-slate-100 dark:bg-zinc-800 text-slate-800 dark:text-zinc-200 text-xs rounded-xl font-mono uppercase"
+                          >
+                            New Query
+                          </button>
+                          <button
+                            onClick={handleWhatsAppConsult}
+                            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs rounded-xl font-mono uppercase font-semibold flex items-center gap-1"
+                          >
+                            Chat via WhatsApp
+                          </button>
+                        </div>
+                      </div>
+                    ) : null}
 
-                  <h3 className="text-xs font-mono font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-widest mb-6 block">
-                    CONSULT ENQUIRY SHEET
-                  </h3>
+                    <h3 className="text-lg font-serif font-semibold text-slate-900 dark:text-zinc-100 mb-6 flex items-center gap-2">
+                      <DraftingCompass className="w-5 h-5 text-amber-600" /> Spatial Consultation Desk
+                    </h3>
 
-                  <form onSubmit={handleSubmitLead} className="space-y-4 font-sans text-xs">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      
-                      {/* Name */}
+                    <form onSubmit={handleSubmitLead} className="space-y-4 font-sans text-xs">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                          <label className="text-[10px] uppercase font-mono tracking-wider text-slate-500 block">
+                            Your Name *
+                          </label>
+                          <input 
+                            type="text" 
+                            required
+                            placeholder="e.g. Adv. Saurabh Verma"
+                            value={clientName}
+                            onChange={(e) => setClientName(e.target.value)}
+                            className="w-full text-xs bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 outline-none focus:border-amber-600 dark:focus:border-amber-500 transition-all text-slate-800 dark:text-zinc-100"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[10px] uppercase font-mono tracking-wider text-slate-500 block">
+                            Contact / Phone Number *
+                          </label>
+                          <input 
+                            type="tel" 
+                            required
+                            placeholder="e.g. +91 99887 76655"
+                            value={clientContact}
+                            onChange={(e) => setClientContact(e.target.value)}
+                            className="w-full text-xs bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 outline-none focus:border-amber-600 dark:focus:border-amber-500 transition-all text-slate-800 dark:text-zinc-100"
+                          />
+                        </div>
+                      </div>
+
                       <div className="space-y-1">
-                        <label className="text-[10px] font-mono uppercase tracking-wider text-slate-500 dark:text-zinc-400">
-                          Your Name
+                        <label className="text-[10px] uppercase font-mono tracking-wider text-slate-500 block">
+                          Project Brief &amp; Spatial Requirements *
                         </label>
-                        <input
-                          type="text"
+                        <textarea 
                           required
-                          placeholder="Full Name"
-                          value={clientName}
-                          onChange={(e) => setClientName(e.target.value)}
-                          className="w-full text-xs bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 outline-none focus:border-amber-600 transition-all text-slate-800 dark:text-zinc-100"
+                          rows={4}
+                          placeholder="Please specify layout details (Bungalow flat, kitchen size, or corporate desk requirements at Shahjahanpur)..."
+                          value={projectBrief}
+                          onChange={(e) => setProjectBrief(e.target.value)}
+                          className="w-full text-xs bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 outline-none focus:border-amber-600 dark:focus:border-amber-500 transition-all text-slate-800 dark:text-zinc-100 resize-none"
                         />
                       </div>
 
-                      {/* Contact */}
-                      <div className="space-y-1">
-                        <label className="text-[10px] font-mono uppercase tracking-wider text-slate-500 dark:text-zinc-400">
-                          Phone Number or Email Address
-                        </label>
-                        <input
-                          type="text"
-                          required
-                          placeholder="How structurally can we reach you"
-                          value={clientContact}
-                          onChange={(e) => setClientContact(e.target.value)}
-                          className="w-full text-xs bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 outline-none focus:border-amber-600 transition-all text-slate-800 dark:text-zinc-100"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Services Choice dropdown */}
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-mono uppercase tracking-wider text-slate-500 dark:text-zinc-400">
-                        Selected Service Category
-                      </label>
-                      <select
-                        value={selectedService}
-                        onChange={(e) => setSelectedService(e.target.value)}
-                        className="w-full text-xs bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 outline-none focus:border-amber-500 text-slate-800 dark:text-zinc-100 transition-all"
-                      >
-                        <option>Flat &amp; Home Interiors</option>
-                        <option>Bespoke Bedroom Architecture</option>
-                        <option>Smart Kitchen Interior</option>
-                        <option>Lush Garden Design</option>
-                        <option>Small Office Interiors</option>
-                        <option>Complete Architectural Consultation</option>
-                        <option>Other Structural Project</option>
-                      </select>
-                    </div>
-
-                    {/* Brief Inquiry Textarea */}
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-mono uppercase tracking-wider text-slate-500 dark:text-zinc-400 block justify-between flex items-center">
-                        <span>Project Brief &amp; Dimensions</span>
-                        {estimateDraft && (
-                          <span className="text-[9px] text-amber-600 bg-amber-50 dark:text-amber-400 dark:bg-amber-950/20 px-1.5 py-0.5 rounded font-bold uppercase animate-pulse">
-                            Estimate Active
+                      {estimateDraft && (
+                        <div className="p-3.5 bg-amber-50/50 dark:bg-amber-950/20 border border-dashed border-amber-300 dark:border-amber-900 rounded-lg space-y-2">
+                          <span className="text-[10px] font-mono font-bold text-amber-600 dark:text-amber-400 block uppercase tracking-wider flex items-center gap-1">
+                            <Info className="w-3.5 h-3.5" /> ATTACHED DRAFT FROM ESTIMATOR:
                           </span>
-                        )}
-                      </label>
-                      <textarea
-                        rows={6}
-                        required
-                        placeholder="Describe the structural goals, square footage, timeline expectations, or site measurements..."
-                        value={projectBrief}
-                        onChange={(e) => setProjectBrief(e.target.value)}
-                        className="w-full text-xs bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-3 outline-none focus:border-amber-600 transition-all font-mono text-slate-800 dark:text-zinc-100"
-                      />
-                    </div>
+                          <pre className="text-[10.5px] font-mono text-slate-600 dark:text-zinc-400 leading-normal whitespace-pre-wrap max-h-36 overflow-y-auto pr-1">
+                            {estimateDraft}
+                          </pre>
+                          <button
+                            type="button"
+                            onClick={() => setEstimateDraft('')}
+                            className="text-[10px] text-red-500 font-mono hover:underline uppercase block"
+                          >
+                            Remove attached pricing estimate parameters
+                          </button>
+                        </div>
+                      )}
 
-                    <div className="pt-2">
-                      <button
-                        type="submit"
-                        className="w-full bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg p-3.5 font-mono font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md shadow-emerald-600/20 cursor-pointer hover:scale-[1.01]"
-                      >
-                        <MessageSquare className="w-4 h-4" /> Book &amp; Submit via WhatsApp
-                      </button>
-                    </div>
-                  </form>
+                      <div className="pt-4 flex flex-col sm:flex-row gap-3">
+                        <button
+                          type="submit"
+                          disabled={isSubmitting}
+                          className="flex-1 flex items-center justify-center gap-1.5 py-3.5 px-6 bg-slate-900 hover:bg-slate-800 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-white rounded-xl text-xs uppercase tracking-wider font-mono font-bold transition-all shadow-sm disabled:opacity-50 cursor-pointer"
+                        >
+                          <Send className="w-3.5 h-3.5" /> {isSubmitting ? 'SENDING INQUIRY...' : 'SUBMIT INTERNAL FORM'}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleWhatsAppConsult}
+                          className="flex-1 flex items-center justify-center gap-1.5 py-3.5 px-6 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs uppercase tracking-wider font-mono font-bold transition-all shadow-sm cursor-pointer"
+                        >
+                          <Phone className="w-3.5 h-3.5" /> CONSULT DIRECT ON WHATSAPP
+                        </button>
+                      </div>
+
+                    </form>
+
+                  </div>
+
+                </div>
+
+                {/* Testimonial rating board at bottom of page */}
+                <div className="pt-4">
+                  <ReviewForm />
                 </div>
 
               </div>
@@ -767,31 +667,19 @@ export default function App() {
 
           </motion.div>
         </AnimatePresence>
+
       </main>
 
-      {/* Persistent Elegant Footer */}
-      <footer className="bg-slate-950 dark:border-t dark:border-zinc-900 text-white py-12 px-6 md:px-12 border-t border-slate-900">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-          <div className="text-center md:text-left space-y-1">
-            <div className="flex items-center justify-center md:justify-start gap-1 font-serif text-lg font-semibold tracking-wide text-zinc-100">
-              <span className="text-[#C8A96E] font-extrabold">VS</span> Architect
-            </div>
-            <p className="text-[10px] font-mono text-zinc-450 tracking-wide uppercase text-zinc-500">
-              Eidgha Road, Shahjahanpur, UP, India
-            </p>
+      {/* Persistent Visual Footer */}
+      <footer className="mt-16 bg-slate-900 text-white border-t border-slate-800 py-12 px-6 md:px-12 text-center transition-colors">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="flex items-center justify-center md:justify-start gap-1 font-serif text-lg font-semibold tracking-wide text-zinc-100">
+            <span className="text-amber-500 font-extrabold">VS</span> Architect Studio
           </div>
-
-          <div className="text-center text-[11px] text-zinc-500 tracking-wider">
-            &copy; {new Date().getFullYear()} VS Architect. All rights reserved.
-          </div>
-
-          <div className="flex gap-4 font-mono text-[10px] text-zinc-450 text-zinc-400">
-            <button onClick={() => { setActiveScreen('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="hover:text-[#C8A96E] transition">Home</button>
-            <span className="text-zinc-700">|</span>
-            <button onClick={() => { setActiveScreen('portfolio'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="hover:text-[#C8A96E] transition">Portfolio</button>
-            <span className="text-zinc-700">|</span>
-            <button onClick={() => { setActiveScreen('services'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="hover:text-[#C8A96E] transition">Services</button>
-          </div>
+          <p className="text-[11px] font-mono text-zinc-500 uppercase tracking-widest leading-normal">
+            Eidgha Road, Shahjahanpur, UP, India. <br />
+            © {new Date().getFullYear()} VS Architect. All Rights Reserved.
+          </p>
         </div>
       </footer>
 

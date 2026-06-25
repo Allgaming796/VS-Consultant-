@@ -3,7 +3,7 @@ export type ScreenType = 'home' | 'portfolio' | 'services' | 'estimator' | 'cont
 export interface ProjectType {
   id: string;
   title: string;
-  category: 'residential' | 'commercial' | 'landscape' | 'interior';
+  category: string;
   location: string;
   description: string;
   image: string;
@@ -11,17 +11,6 @@ export interface ProjectType {
   year: string;
   architect: string;
   highlights: string[];
-}
-
-export interface ServiceType {
-  id: string;
-  type: 'residential' | 'commercial' | 'flexible';
-  tag: string;
-  name: string;
-  description: string;
-  estimateBaseRateRef: number; // in INR per sqft
-  details: string[];
-  image: string;
 }
 
 export interface ReviewType {
@@ -33,9 +22,38 @@ export interface ReviewType {
   date: string;
 }
 
+export interface ServiceType {
+  id: string;
+  type: string;
+  tag: string;
+  name: string;
+  description: string;
+  estimateBaseRateRef: number;
+  details: string[];
+  image: string;
+}
+
 export interface BlueprintCoordinate {
   label: string;
   x: string;
   y: string;
   notes: string;
+}
+
+export type TimeOfDay = 'day' | 'sunset' | 'night';
+
+export type MaterialTheme = 'modern-white' | 'warm-beige' | 'industrial-slate';
+
+export interface HotspotData {
+  id: string;
+  name: string;
+  description: string;
+  position: [number, number, number]; // [x, y, z] in 3D space
+  info: string;
+}
+
+export interface BuildingSpecs {
+  title: string;
+  value: string;
+  icon: string;
 }
