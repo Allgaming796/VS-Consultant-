@@ -22,7 +22,7 @@ const FAQ_ITEMS: FAQData[] = [
   {
     category: 'process',
     question: "Can I hire VS Architect for individual private rooms, bathrooms, or kitchen designs?",
-    answer: "Absolutely. We routinely draft customized layouts for single bedrooms, modular spice kitchens, vertical terrace gardens, or private office floor plans. You can use our Pricing Estimator tool on the site to calculate pricing models for individual rooms."
+    answer: "Absolutely. We routinely draft customized layouts for single bedrooms, modular spice kitchens, vertical terrace gardens, or private office floor plans. You can use our Design & Execution Estimator tool on the site to plan parameters for individual rooms."
   },
   {
     category: 'sourcing',

@@ -11,7 +11,21 @@ export const COMPLETED_PROJECTS: ProjectType[] = [
     size: '3,200 sq. ft.',
     year: '2024',
     architect: 'VS Architect Studio',
-    highlights: ['Warm minimalist textures', 'Smart concealed storage', 'Tailored ergonomic layout', 'Bespoke custom joinery']
+    highlights: ['Warm minimalist textures', 'Smart concealed storage', 'Tailored ergonomic layout', 'Bespoke custom joinery'],
+    galleryImages: [
+      'https://lh3.googleusercontent.com/gps-cs-s/APNQkAGuxR6jt5vnYgzoHB8BwfHGXMxxs2gnNQAnRXWyMDCiJmfKm_mdIIjDLfR-QGAZMy1xsLxsXJ-Utx_0Txr359bZ648atDUZ2ja2RVJatQtahCoUt1KWepyrlpVkJYAIbUuZ3rks=s680-w680-h510-rw',
+      'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&q=80&w=1000',
+      'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=1000',
+      'https://images.unsplash.com/photo-1616137422495-1e9e46e2aa77?auto=format&fit=crop&q=80&w=1000'
+    ],
+    materialsUsed: [
+      'Premium Burmese Teak paneling',
+      'Concealed warm-spectrum 2700K smart LEDs',
+      'Natural Italian Travertine tile inserts',
+      'Matte charcoal-powdered acoustic steel mounts',
+      'Anti-reflective architectural gallery glass'
+    ],
+    challengeSolved: 'The primary architectural challenge was to design a highly functional dual-office workspace within a compact family living room without cluttering the spatial circulation. By building bespoke, concealed double-fold teak partition panels and integrated cable routing conduits, we allowed the workspace to vanish completely into the wall when off-duty, restoring full room volume for family gatherings.'
   },
   {
     id: 'proj-2',
@@ -23,7 +37,21 @@ export const COMPLETED_PROJECTS: ProjectType[] = [
     size: '4,500 sq. ft.',
     year: '2025',
     architect: 'VS Architect Studio',
-    highlights: ['Natural ventilation micro-shaft', 'Central green oasis', 'Local double-brick masonry', 'Off-white textured plaster']
+    highlights: ['Natural ventilation micro-shaft', 'Central green oasis', 'Local double-brick masonry', 'Off-white textured plaster'],
+    galleryImages: [
+      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1000',
+      'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=80&w=1000',
+      'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&q=80&w=1000',
+      'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&q=80&w=1000'
+    ],
+    materialsUsed: [
+      'Hand-molded local double-burnt bricks',
+      'Powder-coated dual-glazed low-emissivity glass panels',
+      'Polished white Kota stone flagging',
+      'Reclaimed solid cedarwood beams',
+      'Breathable lime-wash microcement exterior stucco'
+    ],
+    challengeSolved: 'Located in the highly dense, noisy core of Saddar Bazar, the site suffered from restricted daylight and trapped urban summer heat. We solved this by carving out a 15-foot structural central courtyard. The double-height open shaft pulls natural cool air from the shaded base and pushes hot air out, lowering internal ambient temperatures by 6°C entirely through passive convection.'
   },
   {
     id: 'proj-3',
@@ -35,7 +63,21 @@ export const COMPLETED_PROJECTS: ProjectType[] = [
     size: '1,800 sq. ft.',
     year: '2025',
     architect: 'VS Architect Studio',
-    highlights: ['Co-working flex layouts', 'Integrated automation', 'Acoustic modular ceilings', 'Branding color themes']
+    highlights: ['Co-working flex layouts', 'Integrated automation', 'Acoustic modular ceilings', 'Branding color themes'],
+    galleryImages: [
+      'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1000',
+      'https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&q=80&w=1000',
+      'https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=1000',
+      'https://images.unsplash.com/photo-1542744094-3a31f103e35f?auto=format&fit=crop&q=80&w=1000'
+    ],
+    materialsUsed: [
+      'High-performance acoustic wood-wool boards',
+      'Anodized aluminum frame profiles',
+      'Electrochromic smart glass partitions',
+      'Recycled nylon woven carpet tiles (NRC 0.85)',
+      'Tunable White (2700K - 6500K) linear luminaires'
+    ],
+    challengeSolved: 'With only 1,800 square feet available to house up to 25 staff members and private conference rooms, sound leaking was a severe concern. Our studio implemented double-pane glass wall dividers on dampening tracks and custom high-absorption modular wood-wool ceiling clouds, ensuring full speech privacy inside private offices while preserving visual links.'
   },
   {
     id: 'proj-4',
@@ -47,7 +89,21 @@ export const COMPLETED_PROJECTS: ProjectType[] = [
     size: '450 sq. ft.',
     year: '2024',
     architect: 'VS Architect Studio',
-    highlights: ['Premium quartz countertop', 'Soft-close hidden drawers', 'Built-in appliance layout', 'Brass accents & lighting']
+    highlights: ['Premium quartz countertop', 'Soft-close hidden drawers', 'Built-in appliance layout', 'Brass accents & lighting'],
+    galleryImages: [
+      'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&q=80&w=1000',
+      'https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&q=80&w=1000',
+      'https://images.unsplash.com/photo-1556912172-45b7abe8b7e1?auto=format&fit=crop&q=80&w=1000',
+      'https://images.unsplash.com/photo-1556909212-d5b604d7c992?auto=format&fit=crop&q=80&w=1000'
+    ],
+    materialsUsed: [
+      'Stain-resistant engineered Calacatta quartz',
+      'Pre-tensioned hydraulic soft-close drawer fixtures',
+      'Anti-fingerprint thermal laminate cabinet doors',
+      'Brushed brass profile strips and pull handles',
+      'Water-resistant birch ply sub-cabinet cores'
+    ],
+    challengeSolved: 'The kitchen suffered from awkward structural load-bearing concrete pillars running through the primary counter line. We designed an integrated wrap-around Calacatta quartz countertop and customized pantry shelving that fully absorbs the masonry pillars into the cabinetry, creating a seamless visual plane and expanding the active prep surface.'
   },
   {
     id: 'proj-5',
@@ -59,7 +115,21 @@ export const COMPLETED_PROJECTS: ProjectType[] = [
     size: '1,200 sq. ft.',
     year: '2023',
     architect: 'VS Architect Studio',
-    highlights: ['Automated drip irrigation', 'Native drought-tolerant flora', 'Architectural stone pergolas', 'Low-voltage copper deck uplights']
+    highlights: ['Automated drip irrigation', 'Native drought-tolerant flora', 'Architectural stone pergolas', 'Low-voltage copper deck uplights'],
+    galleryImages: [
+      'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&q=80&w=1000',
+      'https://images.unsplash.com/photo-1507089947368-19c1da9775ae?auto=format&fit=crop&q=80&w=1000',
+      'https://images.unsplash.com/photo-1530745342582-0795f23ec976?auto=format&fit=crop&q=80&w=1000',
+      'https://images.unsplash.com/photo-1563714193019-1bb06f5a42e9?auto=format&fit=crop&q=80&w=1000'
+    ],
+    materialsUsed: [
+      'Multi-ply bituminous root-barrier membrane layers',
+      'Lightweight volcanic pumice planting soils',
+      'Pressure-treated modular teak decking modules',
+      'Cor-Ten weathering steel border retention walls',
+      'Solid structural sandstone pillar blocks'
+    ],
+    challengeSolved: 'The primary technical hurdle was the roofs critical load limit which prevented standard soil weight and potential moisture leakage into the plaster rooms below. Our landscape squad engineered a custom lightweight volcanic soil mix combined with high-performance multi-ply root barriers and an integrated gravity-assisted drainage grid, fully resolving leak risks.'
   },
   {
     id: 'proj-6',
@@ -71,7 +141,21 @@ export const COMPLETED_PROJECTS: ProjectType[] = [
     size: '1,100 sq. ft.',
     year: '2024',
     architect: 'VS Architect Studio',
-    highlights: ['Microcement seamless flooring', 'Custom walnut desks', 'Warm linear light bars', 'Glass partitions for airflow']
+    highlights: ['Microcement seamless flooring', 'Custom walnut desks', 'Warm linear light bars', 'Glass partitions for airflow'],
+    galleryImages: [
+      'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80&w=1000',
+      'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&q=80&w=1000',
+      'https://images.unsplash.com/photo-1600566752355-35792bedcfea?auto=format&fit=crop&q=80&w=1000',
+      'https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&q=80&w=1000'
+    ],
+    materialsUsed: [
+      'Seamless self-leveling industrial microcement',
+      'Eco-certified solid European walnut logs',
+      'Satin-finished single-piece partition glass sheets',
+      'Charcoal-dyed high-density acoustic board backing',
+      'Architectural recessed 3000K dark-light downlights'
+    ],
+    challengeSolved: 'Facing a low-ceiling space (8.2 ft clearance) with single-aspect windows, the office risked feeling cramped. We eliminated central partitions in favor of clear full-height acoustic glass sheets, coupled with a seamless light gray microcement floor that reflects and maximizes ambient light throughout the space.'
   }
 ];
 

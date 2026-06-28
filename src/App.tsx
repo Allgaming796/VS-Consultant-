@@ -17,7 +17,8 @@ import {
   Sparkles,
   Info,
   ChevronRight,
-  DraftingCompass
+  DraftingCompass,
+  ArrowUp
 } from 'lucide-react';
 import Navigation from './components/Navigation';
 import ProjectGallery from './components/ProjectGallery';
@@ -39,6 +40,28 @@ export default function App() {
   const [estimateDraft, setEstimateDraft] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [submitSuccess, setSubmitSuccess] = useState<boolean>(false);
+  const [showBackToTop, setShowBackToTop] = useState<boolean>(false);
+
+  // Monitor page scroll to show/hide "Back to Top" button
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 400) {
+        setShowBackToTop(true);
+      } else {
+        setShowBackToTop(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
 
   // Initialize Dark Mode based on preference
   useEffect(() => {
@@ -143,12 +166,10 @@ export default function App() {
                   </div>
 
                   <div className="relative z-10 max-w-3xl space-y-6">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-600/20 text-amber-400 font-mono text-[10px] uppercase tracking-widest font-bold">
-                      <Sparkles className="w-3.5 h-3.5" /> SHAHJAHANPUR, UP
-                    </span>
-                    <h1 className="text-4xl sm:text-6xl font-serif font-light leading-tight tracking-tight">
-                      Designing Spaces of <br />
-                      <em className="text-amber-400 not-italic font-normal">Quiet Luxury</em> &amp; Spatial Flow
+
+                    <h1 className="text-4xl sm:text-6xl font-display font-medium leading-[1.1] tracking-tight">
+                      <span className="font-sans font-bold">Designing Spaces of</span> <br />
+                      <span className="text-amber-400 font-serif font-light italic">Quiet Luxury</span> &amp; Spatial Flow
                     </h1>
                     <p className="text-sm md:text-base text-zinc-300 leading-relaxed font-sans max-w-2xl font-light">
                       We believe in structural integrity, organic wood panel accents, intelligent daylight distribution, and direct transparency. Guided by decades of regional layout planning, we craft customized flats, workspaces, and gardens.
@@ -207,7 +228,7 @@ export default function App() {
                         <CheckCircle className="w-5 h-5 text-amber-600 dark:text-amber-450 shrink-0 mt-0.5" />
                         <div>
                           <h4 className="font-semibold text-xs text-slate-900 dark:text-zinc-100">Absolute Transparency</h4>
-                          <p className="text-[11px] text-slate-500 leading-normal">Direct pricing models matching our digital estimator outputs.</p>
+                          <p className="text-[11px] text-slate-500 leading-normal">Custom design and scope details matching our digital estimator outputs.</p>
                         </div>
                       </div>
                     </div>
@@ -298,7 +319,7 @@ export default function App() {
                     {/* Step 1 */}
                     <div className="p-6 rounded-2xl bg-white dark:bg-zinc-900 border border-slate-100 dark:border-zinc-850 space-y-4 shadow-sm hover:shadow-md transition">
                       <div className="font-serif text-3xl text-amber-600 dark:text-amber-450 opacity-40">I</div>
-                      <h4 className="font-serif text-lg font-bold text-slate-900 dark:text-zinc-100">
+                      <h4 className="font-serif text-sm font-bold text-slate-900 dark:text-zinc-100 uppercase tracking-wider">
                         Discovery Consult
                       </h4>
                       <p className="text-xs text-slate-500 leading-relaxed">
@@ -309,7 +330,7 @@ export default function App() {
                     {/* Step 2 */}
                     <div className="p-6 rounded-2xl bg-white dark:bg-zinc-900 border border-slate-100 dark:border-zinc-850 space-y-4 shadow-sm hover:shadow-md transition">
                       <div className="font-serif text-3xl text-amber-600 dark:text-amber-450 opacity-40">II</div>
-                      <h4 className="font-serif text-lg font-bold text-slate-900 dark:text-zinc-100">
+                      <h4 className="font-serif text-sm font-bold text-slate-900 dark:text-zinc-100 uppercase tracking-wider">
                         3D Visual Rendering
                       </h4>
                       <p className="text-xs text-slate-500 leading-relaxed">
@@ -320,7 +341,7 @@ export default function App() {
                     {/* Step 3 */}
                     <div className="p-6 rounded-2xl bg-white dark:bg-zinc-900 border border-slate-100 dark:border-zinc-850 space-y-4 shadow-sm hover:shadow-md transition">
                       <div className="font-serif text-3xl text-amber-600 dark:text-amber-450 opacity-40">III</div>
-                      <h4 className="font-serif text-lg font-bold text-slate-900 dark:text-zinc-100">
+                      <h4 className="font-serif text-sm font-bold text-slate-900 dark:text-zinc-100 uppercase tracking-wider">
                         Precise Blueprinting
                       </h4>
                       <p className="text-xs text-slate-500 leading-relaxed">
@@ -331,7 +352,7 @@ export default function App() {
                     {/* Step 4 */}
                     <div className="p-6 rounded-2xl bg-white dark:bg-zinc-900 border border-slate-100 dark:border-zinc-850 space-y-4 shadow-sm hover:shadow-md transition">
                       <div className="font-serif text-3xl text-amber-600 dark:text-amber-450 opacity-40">IV</div>
-                      <h4 className="font-serif text-lg font-bold text-slate-900 dark:text-zinc-100">
+                      <h4 className="font-serif text-sm font-bold text-slate-900 dark:text-zinc-100 uppercase tracking-wider">
                         Turnkey Overseeing
                       </h4>
                       <p className="text-xs text-slate-500 leading-relaxed">
@@ -405,9 +426,14 @@ export default function App() {
                             referrerPolicy="no-referrer"
                             className="w-full h-full object-cover"
                           />
-                          <span className="absolute bottom-3 left-3 bg-slate-900/90 text-white font-mono text-[9px] uppercase tracking-widest px-2.5 py-0.5 rounded border border-white/10">
-                            ₹{svc.estimateBaseRateRef}/sqft base rate
-                          </span>
+                          <a 
+                            href={`https://wa.me/91798575518?text=Hello%20VS%20Architect!%20I%20would%20like%20to%20ask%20about%20the%20pricing%20and%20design%20options%20for%3A%20${encodeURIComponent(svc.name)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="absolute bottom-3 left-3 bg-emerald-600/90 hover:bg-emerald-700 text-white font-mono text-[9px] uppercase tracking-widest px-2.5 py-1 rounded border border-white/10 hover:scale-105 transition-all shadow-md cursor-pointer"
+                          >
+                            Ask from WhatsApp
+                          </a>
                         </div>
                         <div className="p-5 space-y-3">
                           <div>
@@ -629,7 +655,7 @@ export default function App() {
                             onClick={() => setEstimateDraft('')}
                             className="text-[10px] text-red-500 font-mono hover:underline uppercase block"
                           >
-                            Remove attached pricing estimate parameters
+                            Remove attached design layout parameters
                           </button>
                         </div>
                       )}
@@ -682,6 +708,25 @@ export default function App() {
           </p>
         </div>
       </footer>
+
+      {/* Floating Back to Top Button */}
+      <AnimatePresence>
+        {showBackToTop && (
+          <motion.button
+            initial={{ opacity: 0, y: 20, scale: 0.8 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.8 }}
+            whileHover={{ scale: 1.1, y: -2 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={scrollToTop}
+            className="fixed bottom-6 right-6 z-50 p-3.5 bg-amber-600 hover:bg-amber-700 text-white rounded-full shadow-lg border border-amber-500/20 backdrop-blur-sm cursor-pointer transition-all duration-200"
+            title="Scroll to Top"
+            id="back-to-top"
+          >
+            <ArrowUp className="w-5 h-5" />
+          </motion.button>
+        )}
+      </AnimatePresence>
 
     </div>
   );

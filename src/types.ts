@@ -11,6 +11,9 @@ export interface ProjectType {
   year: string;
   architect: string;
   highlights: string[];
+  galleryImages: string[];
+  materialsUsed: string[];
+  challengeSolved: string;
 }
 
 export interface ReviewType {

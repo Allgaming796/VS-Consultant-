@@ -81,7 +81,7 @@ export default function CostCalculator({ onApplyEstimate }: CostCalculatorProps)
 - Total Covered Area: ${squareFootage} sqft
 - Material Quality Level: ${tierMultipliers[qualityTier].name}
 - Working Scope: ${scopeMultipliers[executionScope].name}
-- Rough Budget Estimate: ${formatCurrency(estimates.total)}
+- Pricing: Ask from WhatsApp (+91 798575518)
 - Calculated Handover Timeline: ~${estimates.timelineDays} days`;
   }, [activeService, squareFootage, qualityTier, executionScope, estimates]);
 
@@ -128,8 +128,8 @@ export default function CostCalculator({ onApplyEstimate }: CostCalculatorProps)
                   }`}
                 >
                   <span className="block font-semibold text-xs leading-snug truncate">{s.name}</span>
-                  <span className="block font-mono text-[9px] text-zinc-500 mt-1">
-                    Base: ₹{s.estimateBaseRateRef}/sqft
+                  <span className="block font-mono text-[9px] text-emerald-600 dark:text-emerald-400 mt-1 font-medium">
+                    Ask from WhatsApp
                   </span>
                 </button>
               ))}
@@ -239,28 +239,33 @@ export default function CostCalculator({ onApplyEstimate }: CostCalculatorProps)
 
         {/* Right Cost Summary Sheet */}
         <div className="lg:col-span-5 bg-stone/70 dark:bg-zinc-900/50 border border-slate-200/60 dark:border-zinc-800 rounded-2xl p-6 space-y-6">
-          <div className="text-center pb-4 border-b border-slate-200 dark:border-zinc-800">
+          <div className="text-center pb-4 border-b border-slate-200 dark:border-zinc-800 flex flex-col items-center">
             <span className="text-[10px] font-mono text-slate-500 dark:text-zinc-400 uppercase tracking-widest block mb-1">
               Estimated Budget Range
             </span>
-            <div className="text-4xl font-serif font-light text-slate-900 dark:text-amber-450 mt-1 dark:text-amber-400">
-              {formatCurrency(estimates.total)}
-            </div>
-            <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-mono mt-2 inline-flex items-center gap-1">
+            <a 
+              href={`https://wa.me/91798575518?text=Hello%20VS%20Architect!%20I%20am%20inquiring%20about%20the%20pricing%20for%3A%0A-%20Type%3A%20${encodeURIComponent(activeService.name)}%0A-%20Area%3A%20${squareFootage}%20sqft%0A-%20Tier%3A%20${encodeURIComponent(tierMultipliers[qualityTier].name)}%0A-%20Scope%3A%20${encodeURIComponent(scopeMultipliers[executionScope].name)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-2xl font-serif font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors mt-2 flex items-center gap-1.5 underline decoration-dotted"
+            >
+              Ask from WhatsApp
+            </a>
+            <span className="text-[10px] text-slate-500 dark:text-zinc-400 font-mono mt-3 inline-flex items-center gap-1">
               Estimated Duration: ~{estimates.timelineDays} Days
             </span>
           </div>
 
           <div className="space-y-4 font-sans">
             <h4 className="text-[10px] font-mono text-slate-400 dark:text-zinc-500 uppercase tracking-widest">
-              INDICATIVE COST SPLIT
+              PROJECT WORK ALLOCATION
             </h4>
 
             {/* Split 1: Materials */}
             <div className="space-y-1">
               <div className="flex justify-between text-xs">
                 <span className="text-slate-600 dark:text-zinc-400">Premium Materials (45%)</span>
-                <span className="font-mono text-slate-800 dark:text-zinc-200 font-medium">{formatCurrency(estimates.materials)}</span>
+                <span className="font-mono text-slate-800 dark:text-zinc-200 font-medium">45% Share</span>
               </div>
               <div className="h-1.5 w-full bg-slate-200 dark:bg-zinc-800 rounded-full overflow-hidden">
                 <div className="h-full bg-amber-600 rounded-full" style={{ width: '45%' }} />
@@ -271,7 +276,7 @@ export default function CostCalculator({ onApplyEstimate }: CostCalculatorProps)
             <div className="space-y-1">
               <div className="flex justify-between text-xs">
                 <span className="text-slate-600 dark:text-zinc-400">Bespoke Custom Joinery (30%)</span>
-                <span className="font-mono text-slate-800 dark:text-zinc-200 font-medium">{formatCurrency(estimates.customFittings)}</span>
+                <span className="font-mono text-slate-800 dark:text-zinc-200 font-medium">30% Share</span>
               </div>
               <div className="h-1.5 w-full bg-slate-200 dark:bg-zinc-800 rounded-full overflow-hidden">
                 <div className="h-full bg-amber-500 rounded-full" style={{ width: '30%' }} />
@@ -282,7 +287,7 @@ export default function CostCalculator({ onApplyEstimate }: CostCalculatorProps)
             <div className="space-y-1">
               <div className="flex justify-between text-xs">
                 <span className="text-slate-600 dark:text-zinc-400">Layout Drafts &amp; Architecture (15%)</span>
-                <span className="font-mono text-slate-800 dark:text-zinc-200 font-medium">{formatCurrency(estimates.structuralDrafts)}</span>
+                <span className="font-mono text-slate-800 dark:text-zinc-200 font-medium">15% Share</span>
               </div>
               <div className="h-1.5 w-full bg-slate-200 dark:bg-zinc-800 rounded-full overflow-hidden">
                 <div className="h-full bg-slate-600 dark:bg-zinc-500 rounded-full" style={{ width: '15%' }} />
@@ -293,7 +298,7 @@ export default function CostCalculator({ onApplyEstimate }: CostCalculatorProps)
             <div className="space-y-1">
               <div className="flex justify-between text-xs">
                 <span className="text-slate-600 dark:text-zinc-400">Site Directing &amp; Management (10%)</span>
-                <span className="font-mono text-slate-800 dark:text-zinc-200 font-medium">{formatCurrency(estimates.siteManagement)}</span>
+                <span className="font-mono text-slate-800 dark:text-zinc-200 font-medium">10% Share</span>
               </div>
               <div className="h-1.5 w-full bg-slate-200 dark:bg-zinc-800 rounded-full overflow-hidden">
                 <div className="h-full bg-slate-400 dark:bg-zinc-700 rounded-full" style={{ width: '10%' }} />
